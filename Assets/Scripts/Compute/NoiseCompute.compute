@@ -1,0 +1,43 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel GenerateNoise
+
+#include "Includes\FastNoiseLite.hlsl"
+#include "Includes\MetricsCompute.compute"
+
+static const uint NumThreads = 8;
+RWStructuredBuffer<float> _weights;
+
+//int _ChunkSize;
+
+//int indexFromCoord(int x, int y, int z)
+//{
+//    return x + _ChunkSize * (y + _ChunkSize * z);
+//}
+
+//Noise Settings
+
+float _NoiseScale;
+float _Amplitude;
+float _Frequency;
+int _Octaves;
+int _Seed;
+float _GroundPercent;
+
+
+
+[numthreads(NumThreads,NumThreads,NumThreads)]
+void GenerateNoise (uint3 id : SV_DispatchThreadID)
+{
+    fnl_state noise = fnlCreateState(_Seed);
+    noise.noise_type = FNL_NOISE_OPENSIMPLEX2;
+    noise.fractal_type = FNL_FRACTAL_RIDGED;
+    noise.octaves = _Octaves;
+    noise.frequency = _Frequency;
+    
+    float3 pos = id * _NoiseScale;
+    
+    float Ground = -pos.y + (_GroundPercent * _ChunkSize);
+    float n = Ground + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * _Amplitude;
+    
+    _weights[indexFromCoord(id.x, id.y, id.z)] = n;
+}

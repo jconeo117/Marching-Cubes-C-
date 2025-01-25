@@ -1,24 +1,24 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(GenerateField))]
+[CustomEditor(typeof(NoiseGenerator))]
 public class GeneratorEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-       GenerateField FieldGen = (GenerateField)target;
+       NoiseGenerator NoiseSettings = (NoiseGenerator)target;
 
         if (DrawDefaultInspector())
         {
-            if (FieldGen.autoUpdate)
+            if (NoiseSettings.autoUpdate)
             {
-                FieldGen.FieldGenerator();
+                NoiseSettings.GetNoise();
             }
         }
 
         if (GUILayout.Button("Generate"))
         {
-            FieldGen.FieldGenerator();
+            NoiseSettings.GetNoise();
         }
     }
 }

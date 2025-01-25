@@ -1,0 +1,14 @@
+#ifndef HELPER_METRICS
+#define HELPER_METRICS
+
+
+static const uint NumThreads = 8;
+
+int _ChunkSize;
+
+int indexFromCoord(int x, int y, int z)
+{
+    return x + _ChunkSize * (y + _ChunkSize * z);
+}
+
+#endif
