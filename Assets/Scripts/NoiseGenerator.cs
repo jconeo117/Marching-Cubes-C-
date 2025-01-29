@@ -9,7 +9,6 @@ public class NoiseGenerator : MonoBehaviour
     //Noise settings
 
     [Header("Noise Settings")]
-    [SerializeField]public float _NoiseScale = 1f;
     [SerializeField] public float _Frequency = .005f;
     [SerializeField] public float _Amplitude = 5f;
     [SerializeField] public int _Octaves = 8;
@@ -37,7 +36,11 @@ public class NoiseGenerator : MonoBehaviour
 
     void ReleaseBuffer()
     {
-        _weightsBuffer.Release();
+        if(_weightsBuffer != null)
+        {
+            _weightsBuffer.Release();
+            _weightsBuffer=null;
+        }
     }
 
     //Funcion para la generacion de los valores usando Ruido
@@ -54,7 +57,6 @@ public class NoiseGenerator : MonoBehaviour
 
         //Seteamos las variables del Compute Shader
         NoiseShader.SetInt("_ChunkSize", GridMetrics.PointsPerChunks);
-        NoiseShader.SetFloat("_NoiseScale", _NoiseScale);
         NoiseShader.SetFloat("_Amplitude", _Amplitude);
         NoiseShader.SetFloat("_Frequency", _Frequency);
         NoiseShader.SetInt("_Octaves", _Octaves);

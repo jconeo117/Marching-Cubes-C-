@@ -2,21 +2,19 @@
 #pragma kernel GenerateNoise
 
 #include "Includes\FastNoiseLite.hlsl"
-#include "Includes\MetricsCompute.compute"
 
 static const uint NumThreads = 8;
 RWStructuredBuffer<float> _weights;
 
-//int _ChunkSize;
+int _ChunkSize;
 
-//int indexFromCoord(int x, int y, int z)
-//{
-//    return x + _ChunkSize * (y + _ChunkSize * z);
-//}
+int indexFromCoord(int x, int y, int z)
+{
+    return x + _ChunkSize * (y + _ChunkSize * z);
+}
 
 //Noise Settings
 
-float _NoiseScale;
 float _Amplitude;
 float _Frequency;
 int _Octaves;
@@ -34,7 +32,7 @@ void GenerateNoise (uint3 id : SV_DispatchThreadID)
     noise.octaves = _Octaves;
     noise.frequency = _Frequency;
     
-    float3 pos = id * _NoiseScale;
+    float3 pos = float3(id);
     
     float Ground = -pos.y + (_GroundPercent * _ChunkSize);
     float n = Ground + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * _Amplitude;
